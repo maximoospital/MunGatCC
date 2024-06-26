@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {
+                background-color: transparent;
+                overflow: hidden;
+            }
+            .flex {
+                -webkit-box-flex: 1;
+                -ms-flex: 1 1 auto;
+                flex: 1 1 auto
+            }
+            .loader {
+                border: 5px solid orange;
+                border-radius: 50%;
+                border-top: 5px solid #ffffff;
+                width: 40px;
+                height: 40px;
+                -webkit-animation: spin 1s linear infinite;
+                /* Safari */
+                animation: spin 1s linear infinite;
+                margin: auto;
+                left: 0;
+                right: 0;
+                top: 180px;
+                bottom: 0;
+                position: fixed;
+            }
+            img {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                
+            }
+
+            /* Safari */
+            @-webkit-keyframes spin {
+                0% {
+                    -webkit-transform: rotate(0deg);
+                }
+
+                100% {
+                    -webkit-transform: rotate(360deg);
+                }
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .center {
+                border: none !important;
+                text-align: center;
+            }
+
+            .loading {
+                /* Fade in image */
+                -webkit-animation: fadeIn 1s;
+                animation: fadeIn 1s;
+                opacity: 1;
+                animation-iteration-count: 1;
+            }
+
+            @-webkit-keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="loading">
+            <img src="mg_register_mundo_gaturro.png" />
+            <div class="loader"></div>    
+        </div>
+    </body>
+</html>
