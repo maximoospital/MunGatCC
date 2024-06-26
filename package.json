@@ -1,36 +1,27 @@
 {
   "name": "mungatcc",
-  "productName": "mungatcc",
   "version": "1.0.0",
-  "description": "A custom Mundo Gaturro client",
-  "main": "src/index.js",
+  "description": "Cliente custom de Mundo Gaturro.",
+  "homepage": "https://www.github.com/maximoospital/mungatcc",
+  "bugs": {
+    "url": "https://www.github.com/maximoospital/mungatcc/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://www.github.com/maximoospital/mungatcc"
+  },
+  "author": "Maximo Ospital",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "package": "electron-builder --publish never",
+    "release": "electron-builder --publish always",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron-updater": "^6.1.8",
+    "electron-window-state": "^5.0.3"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.4.0",
-    "@electron-forge/maker-deb": "^7.4.0",
-    "@electron-forge/maker-dmg": "^7.4.0",
-    "@electron-forge/maker-rpm": "^7.4.0",
-    "@electron-forge/maker-squirrel": "^7.4.0",
-    "@electron-forge/maker-zip": "^7.4.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
-    "@electron-forge/plugin-fuses": "^7.4.0",
-    "@electron/fuses": "^1.8.0",
-    "electron": "31.1.0"
-  },
-  "keywords": [],
-  "author": {
-    "name": "Maximo Ospital",
-    "email": "59743027+maximoospital@users.noreply.github.com"
-  },
-  "license": "MIT",
-  "dependencies": {
-    "electron-localshortcut": "^3.2.1",
-    "electron-squirrel-startup": "^1.0.1"
+    "electron": "^11.5.0",
+    "electron-builder": "^24.13.3"
   }
 }
