@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/maximoospital/MSRemotePlayLauncher">
+  <a href="https://github.com/maximoospital/MunGatCC">
       <h3 align="center">Mundo Gaturro CC <i>(MunGatCC)</i></h3> 
   </a>
   <h5 align="center">Maximo Ospital, 2024</h5>
