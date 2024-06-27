@@ -14,12 +14,44 @@
   "scripts": {
     "package": "electron-builder --publish never",
     "release": "electron-builder --publish always",
+    "dist": "electron-builder",
+    "dist-mac": "electron-builder --mac",
+    "dist-win": "electron-builder --win",
+    "dist-linux": "electron-builder --linux",
     "start": "electron ."
   },
   "dependencies": {
+    "electron-localshortcut": "^3.0.0",
     "electron-updater": "^6.1.8",
-    "electron-window-state": "^5.0.3",
-    "electron-localshortcut": "^3.0.0"
+    "electron-window-state": "^5.0.3"
+  },
+  "build": {
+    "appId": "com.maximoospital.MunGatCC",
+    "productName": "Mundo Gaturro CC",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.games"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "zip"
+      ]
+    }
   },
   "devDependencies": {
     "electron": "^11.5.0",
