@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, shell } = require('electron');
+const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const windowStateKeeper = require('electron-window-state');
 const electronLocalshortcut = require('electron-localshortcut');
@@ -30,25 +30,68 @@ if (!gotTheLock) {
       autoHideMenuBar: true,
       frame: true,
       title: 'Mundo Gaturro CC',
+      backgroundColor: '#000000',
       icon: __dirname + '/src/ms-icon-310x310.png',
       fullscreenable: true,
       resizable: true,
       fullscreenWindowTitle: true,
       webPreferences: {
         webSecurity: true,
+        nodeIntegration: false,
+        contextIsolation: true,
         plugins: true,
         devTools: true,
+        preload: path.join(__dirname, '/src/codigos.js'),
       },
     });
+
+    ipcMain.on('open-codigos-window', () => {
+      const codigosWindow = new BrowserWindow({
+        // Window configuration
+        width: 980,
+        height: 660,
+        show: true,
+        title: 'Codigos MG',
+        backgroundColor: '#000000',
+        icon: __dirname + '/src/ms-icon-310x310.png',
+        autoHideMenuBar: true,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true,
+          // Additional preferences as needed
+        }
+      });
+      // Load the URL into the window
+      codigosWindow.on('page-title-updated', function(e) {
+        e.preventDefault();
+        codigosWindow.title = 'Codigos MG';
+      });
+      codigosWindow.loadURL('https://mgcodesls.vercel.app/', {userAgent: "mundo-gaturro-desktop-2"});
+      codigosWindow.removeMenu();      
+      codigosWindow.webContents.on('new-window', (event, url) => {
+        event.preventDefault();
+        shell.openExternal(url);
+      });
+    });
+
     mainWindow.hide();
     // Show the main window when it's ready
     mainWindow.webContents.on('did-finish-load', () => {
       // When the site is loaded, show the window
       // Destroy the splash window
-      setTimeout(() => {
-        splash.destroy();
-        mainWindow.show();  
-      }, 1000);
+      mainWindow.webContents.executeJavaScript(`
+        if (window.location.href === 'https://desktop.mundogaturro.com/') {
+          document.querySelector('.nav.navbar-nav.navbar-right').innerHTML = '<li><a href="#" id="botoncodigos" class="btn btn-head" style="font-size: 14px !important; padding-top: 8px !important;">Codigos</a></li>';
+        }
+      `);
+      // If the link with id "botoncodigos" is clicked, print a message
+      mainWindow.webContents.executeJavaScript(`
+        document.getElementById('botoncodigos').addEventListener('click', (e) => {
+          e.preventDefault();
+          window.electron.send('open-codigos-window');
+        });
+      `);
+
       mainWindow.webContents.insertCSS(`
         ::-webkit-scrollbar {
           width: 15px;
@@ -79,7 +122,15 @@ if (!gotTheLock) {
               background-attachment: fixed;
         }
         .header {
-          display: none;
+          background-image: none !important;
+          position: absolute;
+        }
+        .header .menu2 {
+          display: none !important;
+        }
+        ul li a {
+          font-size: 0px !important;
+          padding-bottom: 5px !important;
         }
         .juego {
           height: 100% !important;
@@ -87,32 +138,33 @@ if (!gotTheLock) {
         .juego embed {
           height: 100% !important;
         }
-      `);
-    });
-
-    // Function that only runs when loading the address "mmo.mundogaturro.com"
-    mainWindow.webContents.on('did-navigate', (event, url) => {
-      const dirnameSerialized = JSON.stringify(__dirname.replace(/\\/g, '/'));
-      mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
-        if (details.url.includes('cdn-ar.mundogaturro.com/juego/MMOLoader.swf')) {
-          const dirnameSerialized = JSON.stringify(__dirname.replace(/\\/g, '/'));
-          console.log(dirnameSerialized);
-          console.log(details.url.replace('https://cdn-ar.mundogaturro.com/juego/', 'file://' + __dirname.replace(/\\/g, '/') + '/src/').split('?')[0]);
-          callback({redirectURL: details.url.replace('https://cdn-ar.mundogaturro.com/juego/', 'file:' + __dirname.replace(/\\/g, '/') + '/src/').split('?')[0]})
-          console.log('Redirecting to local file');
-          console.log(details.url);
-        } else {
-          callback({});
+        .help-block {
+          display: none !important;
         }
-      });  
-      if (url.includes('mmo.mundogaturro.com')) {
-        mainWindow.webContents.executeJavaScript(`
-          var embed = document.querySelector('embed');
-          var version = embed.getAttribute('flashvars').split('&version=')[1].split('&')[0];
-          embed.setAttribute('flashvars', embed.getAttribute('flashvars') + '&version='+version);
-        `);
-      }
-    });        
+        .disclaimer {
+          display: none !important;
+        }
+        .socialincons {
+          display: none !important;
+        }
+        .legaltext {
+          display: none !important;
+        }
+        .navbar-right a:hover {
+          background-color: #c8da00 !important;
+        }
+        .navbar-right a:focus {
+          background-color: #c8da00 !important;
+        }
+        .navbar-right a:active {
+          background-color: #c8da00 !important;
+        }
+      `);
+      setTimeout(() => {
+        splash.destroy();
+        mainWindow.show();  
+      }, 1000);
+    });
 
     // Open external links in the user's default browser
     mainWindow.webContents.on('new-window', (event, url) => {
@@ -142,7 +194,9 @@ if (!gotTheLock) {
     // Prevent the site from changing the window title and force a custom title and background color
     mainWindow.on('page-title-updated', function(e) {
       e.preventDefault();
+      mainWindow.setTitle('Mundo Gaturro CC');
     });
+
     mainWindow.setBackgroundColor('black');
     mainWindow.removeMenu();
 
@@ -171,7 +225,7 @@ if (!gotTheLock) {
     splash.center();
   };
 
-  const initializeFlashPlugin = () => {
+   const initializeFlashPlugin = () => {
     let pluginName;
     switch (process.platform) {
       case 'win32':
@@ -182,8 +236,7 @@ if (!gotTheLock) {
         break;
       default:
         pluginName = 'libpepflashplayer.so';
-    }
-
+    } 
     const resourcesPath = app.isPackaged ? process.resourcesPath : __dirname;
 
     if (['freebsd', 'linux', 'netbsd', 'openbsd'].includes(process.platform)) {
@@ -200,9 +253,7 @@ if (!gotTheLock) {
     app.commandLine.appendSwitch('allow-outdated-plugins');
     app.commandLine.appendSwitch('disable-site-isolation-trials');
     app.commandLine.appendSwitch('disable-web-security');
-    app.commandLine.appendSwitch('disable-features', 'CrossSiteDocumentBlockingIfIsolating,CrossSiteDocumentBlockingAlways,IsolateOrigins,site-per-process');
-    app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
-  
+    app.commandLine.appendSwitch('disable-features', 'CrossSiteDocumentBlockingIfIsolating,CrossSiteDocumentBlockingAlways,IsolateOrigins,site-per-process,site-isolation-trial-enforcement,OutOfBlinkCors');
   };
 
   // Force Flash Plugin to use GPU in order to accelerate rendering
